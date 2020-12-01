@@ -1,4 +1,4 @@
-package io.github.mat3e.entity;
+package io.github.mat3e.project;
 
 import org.springframework.data.annotation.PersistenceConstructor;
 
@@ -16,7 +16,7 @@ public class Project {
     private int id;
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
-    private Set<ProjectStep> steps = new HashSet<>();
+    private final Set<ProjectStep> steps = new HashSet<>();
 
     @PersistenceConstructor
     public Project() {
@@ -26,7 +26,7 @@ public class Project {
         return id;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.id = id;
     }
 
@@ -34,7 +34,7 @@ public class Project {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 

@@ -1,6 +1,6 @@
-package io.github.mat3e.filter;
+package io.github.mat3e.auth;
 
-import io.github.mat3e.service.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,16 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-public class AuthenticationFilter extends OncePerRequestFilter {
+@RequiredArgsConstructor
+class AuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER = "Bearer ";
 
     private final UserDetailsService userDetailsService;
     private final TokenService tokenService;
-
-    public AuthenticationFilter(UserDetailsService userDetailsService, TokenService tokenService) {
-        this.userDetailsService = userDetailsService;
-        this.tokenService = tokenService;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

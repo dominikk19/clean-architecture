@@ -1,4 +1,4 @@
-package io.github.mat3e.entity;
+package io.github.mat3e.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -10,7 +10,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "project_steps")
-public class ProjectStep {
+class ProjectStep {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
@@ -36,7 +36,7 @@ public class ProjectStep {
         return id;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.id = id;
     }
 

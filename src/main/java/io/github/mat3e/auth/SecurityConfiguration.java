@@ -1,7 +1,6 @@
-package io.github.mat3e.configuration;
+package io.github.mat3e.auth;
 
-import io.github.mat3e.filter.AuthenticationFilter;
-import io.github.mat3e.service.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,15 +20,13 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import java.util.Set;
 
 @EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final TokenService tokenService;
 
-    public SecurityConfiguration(TokenService tokenService) {
-        this.tokenService = tokenService;
-    }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService())
                 .passwordEncoder(passwordEncoder());
     }
@@ -48,6 +45,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+    @Override
     @Bean
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
@@ -65,7 +63,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

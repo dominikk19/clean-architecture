@@ -1,34 +1,45 @@
-package io.github.mat3e.dto;
+package io.github.mat3e.task;
 
-import io.github.mat3e.entity.Task;
+import io.github.mat3e.project.Project;
+import org.springframework.data.annotation.PersistenceConstructor;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
-public class TaskDto {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+@Table(name = "tasks")
+public class Task {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     @NotNull
     private String description;
     private boolean done;
     private ZonedDateTime deadline;
+    private int changesCount;
     private String additionalComment;
+    @ManyToOne
+    @JoinColumn(name = "source_id")
+    private Project project;
 
-    public TaskDto() {
+    @PersistenceConstructor
+    public Task() {
     }
 
-    public TaskDto(Task source) {
-        id = source.getId();
-        description = source.getDescription();
-        done = source.isDone();
-        deadline = source.getDeadline();
-        additionalComment = source.getAdditionalComment();
+    public Task(@NotNull String description, ZonedDateTime deadline, Project project) {
+        this.description = description;
+        this.deadline = deadline;
+        this.project = project;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.id = id;
     }
 
@@ -56,11 +67,27 @@ public class TaskDto {
         this.deadline = deadline;
     }
 
+    public int getChangesCount() {
+        return changesCount;
+    }
+
+    public void setChangesCount(int changesCount) {
+        this.changesCount = changesCount;
+    }
+
     public String getAdditionalComment() {
         return additionalComment;
     }
 
     public void setAdditionalComment(String additionalComment) {
         this.additionalComment = additionalComment;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    void setProject(Project project) {
+        this.project = project;
     }
 }

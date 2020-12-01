@@ -1,8 +1,9 @@
-package io.github.mat3e.controller;
+package io.github.mat3e.auth;
 
-import io.github.mat3e.dto.AuthenticationRequestDto;
-import io.github.mat3e.dto.AuthenticationResponseDto;
-import io.github.mat3e.service.TokenService;
+import io.github.mat3e.auth.AuthenticationRequestDto;
+import io.github.mat3e.auth.AuthenticationResponseDto;
+import io.github.mat3e.auth.TokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,17 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/authenticate")
-public class AuthenticationController {
+@RequiredArgsConstructor
+class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, TokenService tokenService) {
-        this.authenticationManager = authenticationManager;
-        this.tokenService = tokenService;
-    }
-
     @PostMapping
-    public ResponseEntity<AuthenticationResponseDto> createToken(@RequestBody AuthenticationRequestDto authRequest) {
+    ResponseEntity<AuthenticationResponseDto> createToken(@RequestBody AuthenticationRequestDto authRequest) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getUsername(),
