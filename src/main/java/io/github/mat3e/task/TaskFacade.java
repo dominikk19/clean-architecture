@@ -1,21 +1,40 @@
 package io.github.mat3e.task;
 
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class TaskService {
+public class TaskFacade {
     private final TaskRepository taskRepository;
+    private final TaskFactory taskFactory;
+
+
+    public List<TaskDto> saveAll(Collection<TaskDto> tasks, SimpleProjectQueryDto project) {
+        return taskRepository.saveAll(tasks.stream()
+                .map(dto -> taskFactory.from(dto, project))
+                .collect(toList()))
+                .stream()
+                .map(Task::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public boolean areUndoneTasksWithProjectId(int projectId){
+        return taskRepository.findAllByProject_Id(projectId).stream().anyMatch(task -> !task.isDone());
+    }
+
 
     TaskDto save(TaskDto toSave) {
-        return new TaskDto(
+        return
                 taskRepository.save(
                         taskRepository.findById(toSave.getId())
                                 .map(existingTask -> {
@@ -32,13 +51,12 @@ class TaskService {
                             result.setAdditionalComment(toSave.getAdditionalComment());
                             return result;
                         })
-                )
-        );
+                ).toDto();
     }
 
-     List<TaskDto> list() {
+    List<TaskDto> list() {
         return taskRepository.findAll().stream()
-                .map(TaskDto::new)
+                .map(Task::toDto)
                 .collect(toList());
     }
 
@@ -49,10 +67,12 @@ class TaskService {
     }
 
     Optional<TaskDto> get(int id) {
-        return taskRepository.findById(id).map(TaskDto::new);
+        return taskRepository.findById(id).map(Task::toDto);
     }
 
     void delete(int id) {
         taskRepository.deleteById(id);
     }
+
+
 }

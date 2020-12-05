@@ -1,8 +1,8 @@
 package io.github.mat3e.project;
 
-import io.github.mat3e.task.Task;
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
 import io.github.mat3e.task.TaskDto;
-import io.github.mat3e.task.TaskRepository;
+import io.github.mat3e.task.TaskFacade;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,10 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-class ProjectService {
+class ProjectFacade {
     private final ProjectRepository projectRepository;
     private final ProjectStepRepository projectStepRepository;
-    private final TaskRepository taskRepository;
+    private final TaskFacade taskFacade;
 
     Project save(Project toSave) {
         if (toSave.getId() != 0) {
@@ -35,7 +35,7 @@ class ProjectService {
                 step.setProject(toSave);
             }
         });
-        return  projectRepository.save(toSave);
+        return projectRepository.save(toSave);
     }
 
     private Project saveWithId(Project toSave) {
@@ -86,19 +86,17 @@ class ProjectService {
     }
 
     List<TaskDto> createTasks(int projectId, ZonedDateTime projectDeadline) {
-        if (taskRepository.findAllByProject_Id(projectId).stream().anyMatch(task -> !task.isDone())) {
+        if (taskFacade.areUndoneTasksWithProjectId(projectId)) {
             throw new IllegalStateException("There are still some undone tasks from a previous project instance!");
         }
-        return taskRepository.saveAll(projectRepository.findById(projectId).stream()
-                .flatMap(project -> project.getSteps().stream()
-                        .map(step -> new Task(
-                                        step.getDescription(),
-                                        projectDeadline.plusDays(step.getDaysToProjectDeadline()),
-                                        project
-                                )
-                        )
-                ).collect(toList())).stream()
-                .map(TaskDto::new)
-                .collect(toList());
+        return projectRepository.findById(projectId).map(project -> {
+            List<TaskDto> tasks = project.getSteps().stream()
+                    .map(step -> TaskDto.builder()
+                            .withDescription(step.getDescription())
+                            .withDeadline(projectDeadline.plusDays(step.getDaysToProjectDeadline()))
+                            .build()
+                    ).collect(toList());
+            return taskFacade.saveAll(tasks, new SimpleProjectQueryDto(projectId, project.getName()));
+        }).orElseThrow(() -> new IllegalArgumentException("No project found with id: " + projectId));
     }
 }

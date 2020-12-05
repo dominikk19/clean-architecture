@@ -1,4 +1,4 @@
-package io.github.mat3e.project;
+package io.github.mat3e.project.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,9 +7,10 @@ import lombok.Setter;
 
 import java.time.ZonedDateTime;
 
-@Getter(AccessLevel.PACKAGE)
+@Getter
 @Setter(AccessLevel.PACKAGE)
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor
+public
 class ProjectDeadlineDto {
     private ZonedDateTime deadline;
 

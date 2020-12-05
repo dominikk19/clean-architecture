@@ -1,9 +1,17 @@
 package io.github.mat3e.task;
 
-import io.github.mat3e.project.Project;
+import io.github.mat3e.project.query.SimpleProjectQueryDto;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
@@ -11,7 +19,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+@Getter(value = AccessLevel.PACKAGE)
+@Setter(value = AccessLevel.PACKAGE)
+class Task {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
@@ -23,71 +33,26 @@ public class Task {
     private String additionalComment;
     @ManyToOne
     @JoinColumn(name = "source_id")
-    private Project project;
+    private SimpleProjectQueryDto project;
 
     @PersistenceConstructor
     public Task() {
     }
 
-    public Task(@NotNull String description, ZonedDateTime deadline, Project project) {
+    Task(String description, ZonedDateTime deadline, SimpleProjectQueryDto project) {
         this.description = description;
         this.deadline = deadline;
         this.project = project;
     }
 
-    public int getId() {
-        return id;
+    TaskDto toDto() {
+        return TaskDto.builder()
+                .withId(id)
+                .withDescription(description)
+                .withDone(done)
+                .withDeadline(deadline)
+                .withAdditionalComment(additionalComment)
+                .build();
     }
 
-    void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
-    public ZonedDateTime getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(ZonedDateTime deadline) {
-        this.deadline = deadline;
-    }
-
-    public int getChangesCount() {
-        return changesCount;
-    }
-
-    public void setChangesCount(int changesCount) {
-        this.changesCount = changesCount;
-    }
-
-    public String getAdditionalComment() {
-        return additionalComment;
-    }
-
-    public void setAdditionalComment(String additionalComment) {
-        this.additionalComment = additionalComment;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    void setProject(Project project) {
-        this.project = project;
-    }
 }
