@@ -1,8 +1,10 @@
 package io.github.mat3e.project;
 
-import io.github.mat3e.project.query.SimpleProjectQueryDto;
-import io.github.mat3e.task.TaskDto;
+import io.github.mat3e.project.dto.ProjectDto;
+import io.github.mat3e.project.dto.SimpleProjectQueryEntity;
 import io.github.mat3e.task.TaskFacade;
+import io.github.mat3e.task.TaskQueryRepository;
+import io.github.mat3e.task.dto.TaskDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
@@ -22,20 +23,18 @@ class ProjectFacade {
     private final ProjectRepository projectRepository;
     private final ProjectStepRepository projectStepRepository;
     private final TaskFacade taskFacade;
+    private final ProjectFactory projectFactory;
+    private final TaskQueryRepository taskQueryRepository;
 
-    Project save(Project toSave) {
-        if (toSave.getId() != 0) {
-            return saveWithId(toSave);
+    ProjectDto save(ProjectDto toSave) {
+        var projectToSave = projectFactory.fromDto(toSave);
+        if (projectToSave.getId() != 0) {
+            return saveWithId(projectToSave).convertToDto();
         }
-        if (toSave.getSteps().stream().anyMatch(step -> step.getId() != 0)) {
+        if (projectToSave.getSteps().stream().anyMatch(step -> step.getId() != 0)) {
             throw new IllegalStateException("Cannot add project with existing steps");
         }
-        toSave.getSteps().forEach(step -> {
-            if (step.getProject() == null) {
-                step.setProject(toSave);
-            }
-        });
-        return projectRepository.save(toSave);
+        return projectRepository.save(projectToSave).convertToDto();
     }
 
     private Project saveWithId(Project toSave) {
@@ -77,16 +76,8 @@ class ProjectFacade {
                 });
     }
 
-    List<Project> list() {
-        return projectRepository.findAll();
-    }
-
-    Optional<Project> get(int id) {
-        return projectRepository.findById(id);
-    }
-
     List<TaskDto> createTasks(int projectId, ZonedDateTime projectDeadline) {
-        if (taskFacade.areUndoneTasksWithProjectId(projectId)) {
+        if (taskQueryRepository.existsByDoneIsFalseAndProject_Id(projectId)) {
             throw new IllegalStateException("There are still some undone tasks from a previous project instance!");
         }
         return projectRepository.findById(projectId).map(project -> {
@@ -96,7 +87,7 @@ class ProjectFacade {
                             .withDeadline(projectDeadline.plusDays(step.getDaysToProjectDeadline()))
                             .build()
                     ).collect(toList());
-            return taskFacade.saveAll(tasks, new SimpleProjectQueryDto(projectId, project.getName()));
+            return taskFacade.saveAll(tasks, new SimpleProjectQueryEntity(projectId, project.getName()));
         }).orElseThrow(() -> new IllegalArgumentException("No project found with id: " + projectId));
     }
 }

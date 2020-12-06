@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 interface TaskRepository extends Repository<Task, Integer> {
-    List<Task> findAllByProject_Id(int id);
-
-    List<Task> findAll();
 
     Optional<Task> findById(int id);
 
@@ -18,5 +15,4 @@ interface TaskRepository extends Repository<Task, Integer> {
 
     void deleteById(int id);
 
-    long count();
 }

@@ -1,5 +1,8 @@
 package io.github.mat3e.task;
 
+import io.github.mat3e.task.dto.TaskDto;
+import io.github.mat3e.task.dto.TaskWithChangesDto;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,23 +19,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class TaskController {
     private final TaskFacade taskFacade;
+    private final TaskQueryRepository taskQueryRepository;
 
     @GetMapping
     List<TaskDto> list() {
-        return taskFacade.list();
+        return taskQueryRepository.findAllBy();
     }
 
     @GetMapping(params = "changes")
     List<TaskWithChangesDto> listWithChanges() {
-        return taskFacade.listWithChanges();
+        return taskQueryRepository.findAllWithChangesBy();
     }
 
     @GetMapping("/{id}")
     ResponseEntity<TaskDto> get(@PathVariable int id) {
-        return taskFacade.get(id)
+        return taskQueryRepository.getDtoById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

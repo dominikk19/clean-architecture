@@ -1,5 +1,6 @@
 package io.github.mat3e.project;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -11,13 +12,14 @@ import org.springframework.stereotype.Component;
  * @date 01.12.2020
  */
 @Component("projectWarmup")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class Warmup implements ApplicationListener<ContextRefreshedEvent> {
     private final ProjectRepository projectRepository;
+    private final ProjectQueryRepository projectQueryRepository;
 
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent event) {
-        if (projectRepository.count() == 0) {
+        if (projectQueryRepository.count() == 0) {
             var project = new Project();
             project.setName("Example project");
             project.addStep(new ProjectStep("First", -3, project));

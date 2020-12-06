@@ -1,6 +1,7 @@
 package io.github.mat3e.task;
 
-import io.github.mat3e.project.query.SimpleProjectQueryDto;
+import io.github.mat3e.project.dto.SimpleProjectQueryEntity;
+import io.github.mat3e.task.dto.TaskDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,13 +34,13 @@ class Task {
     private String additionalComment;
     @ManyToOne
     @JoinColumn(name = "source_id")
-    private SimpleProjectQueryDto project;
+    private SimpleProjectQueryEntity project;
 
     @PersistenceConstructor
     public Task() {
     }
 
-    Task(String description, ZonedDateTime deadline, SimpleProjectQueryDto project) {
+    Task(String description, ZonedDateTime deadline, SimpleProjectQueryEntity project) {
         this.description = description;
         this.deadline = deadline;
         this.project = project;

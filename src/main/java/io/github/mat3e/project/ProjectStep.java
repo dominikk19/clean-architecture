@@ -1,6 +1,11 @@
 package io.github.mat3e.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.mat3e.project.dto.ProjectStepDto;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.persistence.Entity;
@@ -15,6 +20,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "project_steps")
+@Getter(value = AccessLevel.PACKAGE)
+@Setter(value = AccessLevel.PACKAGE)
 class ProjectStep {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -37,35 +44,17 @@ class ProjectStep {
         this.project = project;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    void setId(int id) {
+    ProjectStep(final int id, @NonNull final String description, final int daysToProjectDeadline, final Project project) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getDaysToProjectDeadline() {
-        return daysToProjectDeadline;
-    }
-
-    public void setDaysToProjectDeadline(int daysToProjectDeadline) {
         this.daysToProjectDeadline = daysToProjectDeadline;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
         this.project = project;
+    }
+    void setProject(Project project){
+        this.project = project;
+    }
+
+    ProjectStepDto convertToDto(){
+        return ProjectStepDto.create(id, description, daysToProjectDeadline);
     }
 }
