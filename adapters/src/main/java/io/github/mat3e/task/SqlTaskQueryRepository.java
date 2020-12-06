@@ -7,5 +7,5 @@ import org.springframework.data.repository.Repository;
  * @project JavaCleanArchitecture
  * @date 06.12.2020
  */
-interface SqlTaskQueryRepository extends TaskQueryRepository, Repository<Task, Integer> {
+interface SqlTaskQueryRepository extends Repository<SqlTask, Integer> {
 }

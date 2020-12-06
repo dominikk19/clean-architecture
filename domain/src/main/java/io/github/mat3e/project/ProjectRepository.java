@@ -6,5 +6,5 @@ interface ProjectRepository {
 
     Optional<Project> findById(int id);
 
-    <S extends Project> S save(S entity);
+    Project save(Project entity);
 }
