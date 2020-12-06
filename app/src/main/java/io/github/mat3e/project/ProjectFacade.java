@@ -8,7 +8,6 @@ import io.github.mat3e.task.TaskQueryRepository;
 import io.github.mat3e.task.dto.TaskDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-@Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ProjectFacade {
     private final ProjectRepository projectRepository;
@@ -93,13 +91,13 @@ class ProjectFacade {
     }
 
     private ProjectDto convertToDto(Project project) {
-        return ProjectDto.create(project.getId(), project.getName(),project.getSteps().stream()
+        return ProjectDto.create(project.getId(), project.getName(), project.getSteps().stream()
                 .map(this::convertToDto)
-                .collect(toList()));
+                .collect(toSet()));
     }
 
 
-    private ProjectStepDto convertToDto(ProjectStep projectStep){
+    private ProjectStepDto convertToDto(ProjectStep projectStep) {
         return ProjectStepDto.create(projectStep.getId(), projectStep.getDescription(), projectStep.getDaysToProjectDeadline());
     }
 }

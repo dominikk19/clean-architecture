@@ -1,10 +1,7 @@
 package io.github.mat3e.task;
 
 import io.github.mat3e.task.dto.TaskDto;
-import io.github.mat3e.task.dto.TaskWithChangesDto;
-import org.springframework.data.repository.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,16 +10,13 @@ import java.util.Set;
  * @project java-clean-architecture
  * @date 05.12.2020
  */
-public interface TaskQueryRepository extends Repository<Task, Integer> {
-    List<TaskDto> findAllBy();
-
-    List<TaskWithChangesDto> findAllWithChangesBy();
+public interface TaskQueryRepository {
 
     Optional<TaskDto> getDtoById(int id);
 
-    boolean existsByDoneIsFalseAndProject_Id(int id);
-
     <T> Set<T> findBy(Class<T> type);
+
+    boolean existsByDoneIsFalseAndProject_Id(int id);
 
     int count();
 }

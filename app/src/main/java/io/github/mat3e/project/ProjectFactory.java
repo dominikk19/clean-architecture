@@ -4,7 +4,6 @@ import io.github.mat3e.project.dto.ProjectDto;
 import io.github.mat3e.project.dto.ProjectStepDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
  * @project java-clean-architecture
  * @date 05.12.2020
  */
-@Service
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 class ProjectFactory {
     public Project fromDto(ProjectDto toSave) {

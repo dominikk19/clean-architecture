@@ -4,7 +4,6 @@ import io.github.mat3e.project.dto.SimpleProjectQueryEntity;
 import io.github.mat3e.task.dto.TaskDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-@Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class TaskFacade {
     private final TaskRepository taskRepository;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Dominik Kiszka {dominikk19}
@@ -14,21 +14,21 @@ import java.util.List;
 @JsonDeserialize(as = ProjectDto.DeserializationImpl.class)
 public interface ProjectDto {
 
-    static ProjectDto create(final int id, final String name, final List<ProjectStepDto> steps){
-        return new DeserializationImpl(id,name, steps);
+    static ProjectDto create(final int id, final String name, final Set<ProjectStepDto> steps) {
+        return new DeserializationImpl(id, name, steps);
     }
 
     int getId();
 
     String getName();
 
-    List<ProjectStepDto> getSteps();
+    Set<ProjectStepDto> getSteps();
 
     @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
     class DeserializationImpl implements ProjectDto {
         private final int id;
         private final String name;
-        private final List<ProjectStepDto> steps;
+        private final Set<ProjectStepDto> steps;
 
 
         @Override
@@ -42,7 +42,7 @@ public interface ProjectDto {
         }
 
         @Override
-        public List<ProjectStepDto> getSteps() {
+        public Set<ProjectStepDto> getSteps() {
             return steps;
         }
     }

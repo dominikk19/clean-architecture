@@ -1,5 +1,6 @@
 package io.github.mat3e.project;
 
+import com.google.common.collect.Lists;
 import io.github.mat3e.project.dto.ProjectDeadlineDto;
 import io.github.mat3e.project.dto.ProjectDto;
 import io.github.mat3e.task.dto.TaskDto;
@@ -28,7 +29,7 @@ class ProjectController {
 
     @GetMapping
     List<ProjectDto> list() {
-        return projectQueryRepository.findBy();
+        return Lists.newArrayList(projectQueryRepository.findBy(ProjectDto.class));
     }
 
     @GetMapping("/{id}")

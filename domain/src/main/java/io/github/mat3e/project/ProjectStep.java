@@ -1,6 +1,5 @@
 package io.github.mat3e.project;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -28,7 +27,6 @@ class ProjectStep {
     @NotNull
     private String description;
     private int daysToProjectDeadline;
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;

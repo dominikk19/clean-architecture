@@ -2,14 +2,12 @@ package io.github.mat3e.task;
 
 import io.github.mat3e.project.dto.SimpleProjectQueryEntity;
 import io.github.mat3e.task.dto.TaskDto;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Dominik Kiszka {dominikk19}
  * @project java-clean-architecture
  * @date 05.12.2020
  */
-@Service
 class TaskFactory {
     Task from(final TaskDto source, final SimpleProjectQueryEntity project) {
         var result = new Task(source.getDescription(), source.getDeadline(), project);

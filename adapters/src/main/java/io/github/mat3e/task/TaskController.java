@@ -1,5 +1,6 @@
 package io.github.mat3e.task;
 
+import com.google.common.collect.Lists;
 import io.github.mat3e.task.dto.TaskDto;
 import io.github.mat3e.task.dto.TaskWithChangesDto;
 import lombok.AccessLevel;
@@ -26,12 +27,12 @@ class TaskController {
 
     @GetMapping
     List<TaskDto> list() {
-        return taskQueryRepository.findAllBy();
+        return Lists.newArrayList(taskQueryRepository.findBy(TaskDto.class));
     }
 
     @GetMapping(params = "changes")
     List<TaskWithChangesDto> listWithChanges() {
-        return taskQueryRepository.findAllWithChangesBy();
+        return Lists.newArrayList(taskQueryRepository.findBy(TaskWithChangesDto.class));
     }
 
     @GetMapping("/{id}")
