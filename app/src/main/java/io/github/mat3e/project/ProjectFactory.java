@@ -15,13 +15,16 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 class ProjectFactory {
     public Project fromDto(ProjectDto toSave) {
-        var project = new Project(toSave.getId(), toSave.getName());
-        toSave.getSteps().stream().map(step -> convertFrom(step, project)).collect(Collectors.toSet())
-                .forEach(project::addStep);
-        return project;
+        return Project.restore(
+                new ProjectSnapshot(toSave.getId(),
+                        toSave.getName(),
+                        toSave.getSteps()
+                                .stream()
+                                .map(this::convertFrom)
+                                .collect(Collectors.toSet())));
     }
 
-    private ProjectStep convertFrom(ProjectStepDto projectStepDto, Project project) {
-        return new ProjectStep(projectStepDto.getId(), projectStepDto.getDescription(), projectStepDto.getDaysToProjectDeadline(), project);
+    private ProjectStepSnapshot convertFrom(ProjectStepDto projectStepDto) {
+        return new ProjectStepSnapshot(projectStepDto.getId(), projectStepDto.getDescription(), projectStepDto.getDaysToProjectDeadline());
     }
 }

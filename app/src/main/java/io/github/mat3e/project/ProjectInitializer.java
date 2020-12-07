@@ -3,6 +3,8 @@ package io.github.mat3e.project;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Set;
+
 /**
  * @author Dominik Kiszka {dominikk19}
  * @project JavaCleanArchitecture
@@ -15,12 +17,21 @@ class ProjectInitializer {
 
     void init() {
         if (projectQueryRepository.count() == 0) {
-            var project = new Project();
-            project.setName("Example project");
-            project.addStep(new ProjectStep("First", -3, project));
-            project.addStep(new ProjectStep("Second", -2, project));
-            project.addStep(new ProjectStep("Third", 0, project));
-            projectRepository.save(project);
+            projectRepository.save(
+                    Project.restore(
+                            new ProjectSnapshot(
+                                    0,
+                                    "Example project",
+                                    Set.of(
+                                            new ProjectStepSnapshot(0, "First", -3),
+                                            new ProjectStepSnapshot(0, "Second", -2),
+                                            new ProjectStepSnapshot(0, "Third", 0)
+                                    )
+                            )
+                    )
+
+            );
+
         }
     }
 }

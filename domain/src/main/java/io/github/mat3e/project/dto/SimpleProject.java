@@ -1,7 +1,8 @@
 package io.github.mat3e.project.dto;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author Dominik Kiszka {dominikk19}
@@ -10,9 +11,17 @@ import lombok.RequiredArgsConstructor;
  */
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SimpleProject {
+
+    public static SimpleProject restore(final SimpleProjectSnapshot project) {
+        return new SimpleProject(project.getId(), project.getName());
+    }
 
     private final int id;
     private final String name;
+
+    public SimpleProjectSnapshot getSnapshot() {
+        return new SimpleProjectSnapshot(id, name);
+    }
 }

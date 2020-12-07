@@ -15,14 +15,17 @@ import static java.util.stream.Collectors.toList;
  * @project JavaCleanArchitecture
  * @date 06.12.2020
  */
-interface SqlTaskRepository extends Repository<SqlTask, Integer> {
-    Optional<SqlTask> findById(Integer id);
+interface SqlTaskRepository extends Repository<TaskSnapshot, Integer> {
+    Optional<TaskSnapshot> findById(Integer id);
 
-    <S extends SqlTask> S save(S entity);
+    <S extends TaskSnapshot> S save(S entity);
 
-    <S extends SqlTask> List<S> saveAll(Iterable<S> entities);
+    <S extends TaskSnapshot> List<S> saveAll(Iterable<S> entities);
 
     void deleteById(Integer id);
+}
+
+interface SqlTaskQueryRepository extends TaskQueryRepository, Repository<TaskSnapshot, Integer> {
 }
 
 @org.springframework.stereotype.Repository
@@ -33,21 +36,21 @@ class TaskRepositoryImpl implements TaskRepository {
     @Override
     public Optional<Task> findById(int id) {
         return sqlTaskRepository.findById(id)
-                .map(SqlTask::toTask);
+                .map(Task::restore);
     }
 
     @Override
     public Task save(Task entity) {
-        return sqlTaskRepository.save(SqlTask.fromTask(entity)).toTask();
+        return Task.restore(sqlTaskRepository.save(entity.getSnapshot()));
     }
 
     @Override
     public List<Task> saveAll(Iterable<Task> entities) {
         return sqlTaskRepository.saveAll(StreamSupport.stream(entities.spliterator(), false)
-                .map(SqlTask::fromTask)
+                .map(Task::getSnapshot)
                 .collect(toList()))
                 .stream()
-                .map(SqlTask::toTask)
+                .map(Task::restore)
                 .collect(toList());
     }
 

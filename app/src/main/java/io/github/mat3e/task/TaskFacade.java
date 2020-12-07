@@ -32,19 +32,12 @@ public class TaskFacade {
                 toDto(taskRepository.save(
                         taskRepository.findById(toSave.getId())
                                 .map(existingTask -> {
-                                    if (existingTask.isDone() != toSave.isDone()) {
-                                        existingTask.setChangesCount(existingTask.getChangesCount() + 1);
-                                        existingTask.setDone(toSave.isDone());
+                                    if (existingTask.getSnapshot().isDone() != toSave.isDone()) {
+                                        existingTask.toggle();
                                     }
-                                    existingTask.setAdditionalComment(toSave.getAdditionalComment());
-                                    existingTask.setDeadline(toSave.getDeadline());
-                                    existingTask.setDescription(toSave.getDescription());
+                                    existingTask.updateInfo(toSave.getDescription(), toSave.getDeadline(), toSave.getAdditionalComment());
                                     return existingTask;
-                                }).orElseGet(() -> {
-                            var result = new Task(toSave.getDescription(), toSave.getDeadline(), null);
-                            result.setAdditionalComment(toSave.getAdditionalComment());
-                            return result;
-                        })
+                                }).orElseGet(() -> taskFactory.from(toSave, null))
                 ));
     }
 
@@ -53,12 +46,13 @@ public class TaskFacade {
     }
 
     private TaskDto toDto(Task task) {
+        var snapshot = task.getSnapshot();
         return TaskDto.builder()
-                .withId(task.getId())
-                .withDescription(task.getDescription())
-                .withDone(task.isDone())
-                .withDeadline(task.getDeadline())
-                .withAdditionalComment(task.getAdditionalComment())
+                .withId(snapshot.getId())
+                .withDescription(snapshot.getDescription())
+                .withDone(snapshot.isDone())
+                .withDeadline(snapshot.getDeadline())
+                .withAdditionalComment(snapshot.getAdditionalComment())
                 .build();
     }
 

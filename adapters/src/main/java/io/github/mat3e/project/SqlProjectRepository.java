@@ -11,27 +11,39 @@ import java.util.Optional;
  * @project JavaCleanArchitecture
  * @date 06.12.2020
  */
-interface SqlProjectRepository extends Repository<SqlProject, Integer> {
-    SqlProject save(SqlProject project);
+interface SqlProjectRepository extends Repository<ProjectSnapshot, Integer> {
+    ProjectSnapshot save(ProjectSnapshot project);
 
-    Optional<SqlProject> findById(Integer id);
+    Optional<ProjectSnapshot> findById(Integer id);
+}
+
+interface SqlProjectQueryRepository extends ProjectQueryRepository, Repository<ProjectSnapshot, Integer> {
+}
+
+interface SqlProjectStepRepository extends Repository<ProjectStepSnapshot, Integer> {
+    void deleteById(int id);
 }
 
 
 @org.springframework.stereotype.Repository
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class ProjectRepositoryImpl implements ProjectRepository {
-    private final SqlProjectRepository sqlProjectRepository;
+    private final SqlProjectRepository projectRepository;
+    private final SqlProjectStepRepository stepRepository;
 
     @Override
-    public Optional<Project> findById(int id) {
-        return sqlProjectRepository.findById(id)
-                .map(SqlProject::toProject);
+    public Optional<Project> findById(final int id) {
+        return projectRepository.findById(id)
+                .map(Project::restore);
     }
 
     @Override
     public Project save(final Project project) {
-        return sqlProjectRepository.save(SqlProject.fromProject(project))
-                .toProject();
+        return Project.restore(projectRepository.save(project.getSnapshot()));
+    }
+
+    @Override
+    public void delete(final Project.Step entity) {
+        stepRepository.deleteById(entity.getSnapshot().getId());
     }
 }

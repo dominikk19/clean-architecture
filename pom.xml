@@ -9,9 +9,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>application</module>
         <module>domain</module>
         <module>app</module>
         <module>adapters</module>
+        <module>application</module>
     </modules>
 </project>
