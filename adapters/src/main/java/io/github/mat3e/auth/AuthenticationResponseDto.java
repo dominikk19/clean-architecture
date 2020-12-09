@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-@Getter(AccessLevel.PACKAGE)
+@Getter
 class AuthenticationResponseDto {
     private final String token;
 }

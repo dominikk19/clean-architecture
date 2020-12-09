@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter(value = AccessLevel.PACKAGE)
-@Getter(AccessLevel.PACKAGE)
+@Getter
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 class AuthenticationRequestDto {
     private String username;

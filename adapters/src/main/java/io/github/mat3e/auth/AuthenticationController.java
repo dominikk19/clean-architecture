@@ -1,8 +1,5 @@
 package io.github.mat3e.auth;
 
-import io.github.mat3e.auth.AuthenticationRequestDto;
-import io.github.mat3e.auth.AuthenticationResponseDto;
-import io.github.mat3e.auth.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
