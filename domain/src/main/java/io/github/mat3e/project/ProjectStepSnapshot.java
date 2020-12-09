@@ -17,11 +17,6 @@ class ProjectStepSnapshot {
     private int id;
     private String description;
     private int daysToProjectDeadline;
-    private ProjectSnapshot project;
-
-    ProjectStepSnapshot(int id, String description, int daysToProjectDeadline) {
-        this.id = id;
-        this.description = description;
-        this.daysToProjectDeadline = daysToProjectDeadline;
-    }
+    private boolean hasCorrespondingTask;
+    private boolean correspondingTaskIsDone;
 }

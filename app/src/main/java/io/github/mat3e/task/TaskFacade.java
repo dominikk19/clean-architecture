@@ -1,7 +1,9 @@
 package io.github.mat3e.task;
 
-import io.github.mat3e.project.dto.SimpleProject;
+import io.github.mat3e.DomainEventPublisher;
 import io.github.mat3e.task.dto.TaskDto;
+import io.github.mat3e.task.vo.TaskCreator;
+import io.github.mat3e.task.vo.TaskEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -15,12 +17,14 @@ import static java.util.stream.Collectors.toList;
 public class TaskFacade {
     private final TaskRepository taskRepository;
     private final TaskFactory taskFactory;
+    private final DomainEventPublisher publisher;
 
 
-    public List<TaskDto> saveAll(Collection<TaskDto> tasks, SimpleProject project) {
-        return taskRepository.saveAll(tasks.stream()
-                .map(dto -> taskFactory.from(dto, project))
-                .collect(toList()))
+    public List<TaskDto> createTasks(Collection<TaskCreator> tasks) {
+        return taskRepository.saveAll(
+                tasks.stream()
+                        .map(Task::createFrom)
+                        .collect(toList()))
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -33,16 +37,25 @@ public class TaskFacade {
                         taskRepository.findById(toSave.getId())
                                 .map(existingTask -> {
                                     if (existingTask.getSnapshot().isDone() != toSave.isDone()) {
-                                        existingTask.toggle();
+                                        publisher.publish(existingTask.toggle());
                                     }
-                                    existingTask.updateInfo(toSave.getDescription(), toSave.getDeadline(), toSave.getAdditionalComment());
+                                    publisher.publish(existingTask.updateInfo(toSave.getDescription(), toSave.getDeadline(), toSave.getAdditionalComment()));
                                     return existingTask;
-                                }).orElseGet(() -> taskFactory.from(toSave, null))
+                                }).orElseGet(() -> taskFactory.from(toSave))
                 ));
     }
 
     void delete(int id) {
-        taskRepository.deleteById(id);
+        taskRepository.findById(id)
+                .ifPresent(task -> {
+                    taskRepository.deleteById(id);
+                    publisher.publish(new TaskEvent(
+                            task.getSnapshot().getSourceId(),
+                            null,
+                            TaskEvent.State.DELETED
+
+                    ));
+                });
     }
 
     private TaskDto toDto(Task task) {
@@ -55,5 +68,4 @@ public class TaskFacade {
                 .withAdditionalComment(snapshot.getAdditionalComment())
                 .build();
     }
-
 }

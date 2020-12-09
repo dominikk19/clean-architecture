@@ -25,6 +25,11 @@ class ProjectFactory {
     }
 
     private ProjectStepSnapshot convertFrom(ProjectStepDto projectStepDto) {
-        return new ProjectStepSnapshot(projectStepDto.getId(), projectStepDto.getDescription(), projectStepDto.getDaysToProjectDeadline());
+        return new ProjectStepSnapshot(projectStepDto.getId(),
+                projectStepDto.getDescription(),
+                projectStepDto.getDaysToProjectDeadline(),
+                false,
+                false
+        );
     }
 }

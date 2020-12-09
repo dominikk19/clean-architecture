@@ -24,19 +24,11 @@
                 <column nullable="false"/>
             </basic>
             <basic name="additionalComment"/>
-            <many-to-one name="project">
-                <join-column name="source_id"/>
-            </many-to-one>
-        </attributes>
-    </entity>
-
-    <entity class="io.github.mat3e.project.dto.SimpleProjectSnapshot" access="FIELD">
-        <table name="projects"/>
-        <attributes>
-            <id name="id">
-                <generated-value strategy="IDENTITY"/>
-            </id>
-            <basic name="name"/>
+            <embedded name="sourceId">
+                <attribute-override name="id">
+                    <column name="source_id"/>
+                </attribute-override>
+            </embedded>
         </attributes>
     </entity>
 
@@ -53,6 +45,7 @@
                     <cascade-all/>
                 </cascade>
             </one-to-many>
+
         </attributes>
     </entity>
 
@@ -68,6 +61,20 @@
             <basic name="daysToProjectDeadline">
                 <column nullable="false"/>
             </basic>
+            <basic name="hasCorrespondingTask">
+                <column nullable="false"/>
+            </basic>
+            <basic name="correspondingTaskIsDone">
+                <column nullable="false"/>
+            </basic>
         </attributes>
     </entity>
+
+    <embeddable class="io.github.mat3e.task.vo.TaskSourceId">
+        <attributes>
+            <basic name="id">
+                <column nullable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
 </entity-mappings>

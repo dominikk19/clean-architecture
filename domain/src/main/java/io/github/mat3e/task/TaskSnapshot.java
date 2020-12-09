@@ -1,6 +1,6 @@
 package io.github.mat3e.task;
 
-import io.github.mat3e.project.dto.SimpleProjectSnapshot;
+import io.github.mat3e.task.vo.TaskSourceId;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +23,6 @@ class TaskSnapshot {
     private ZonedDateTime deadline;
     private int changesCount;
     private String additionalComment;
-    private SimpleProjectSnapshot project;
+    private TaskSourceId sourceId;
 
 }

@@ -1,5 +1,6 @@
 package io.github.mat3e.task;
 
+import io.github.mat3e.DomainEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,8 +11,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 class TaskConfiguration {
+
     @Bean
-    TaskFacade taskFacade(TaskRepository taskRepository) {
-        return new TaskFacade(taskRepository, new TaskFactory());
+    TaskFacade taskFacade(TaskRepository taskRepository, DomainEventPublisher domainEventPublisher) {
+        return new TaskFacade(taskRepository, new TaskFactory(), domainEventPublisher);
+    }
+
+    @Bean
+    TaskInitializer taskInitializer(final TaskRepository taskRepository, final TaskQueryRepository taskQueryRepository) {
+        return new TaskInitializer(taskRepository, taskQueryRepository);
     }
 }

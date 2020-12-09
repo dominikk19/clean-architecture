@@ -2,7 +2,9 @@ package io.github.mat3e.project;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -15,6 +17,11 @@ interface SqlProjectRepository extends Repository<ProjectSnapshot, Integer> {
     ProjectSnapshot save(ProjectSnapshot project);
 
     Optional<ProjectSnapshot> findById(Integer id);
+
+    @Query(nativeQuery = true,
+            value = "select distinct * from projects p join project_steps s on p.id = s.project_id where s.id = :stepId"
+    )
+    Optional<Project> findWithNestedStepId(@Param("stepId") Integer stepId);
 }
 
 interface SqlProjectQueryRepository extends ProjectQueryRepository, Repository<ProjectSnapshot, Integer> {
@@ -45,5 +52,10 @@ class ProjectRepositoryImpl implements ProjectRepository {
     @Override
     public void delete(final Project.Step entity) {
         stepRepository.deleteById(entity.getSnapshot().getId());
+    }
+
+    @Override
+    public Optional<Project> findByNestedStepId(Integer stepId) {
+        return projectRepository.findWithNestedStepId(stepId);
     }
 }

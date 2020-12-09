@@ -16,7 +16,5 @@ public interface TaskQueryRepository {
 
     <T> Set<T> findBy(Class<T> type);
 
-    boolean existsByDoneIsFalseAndProject_Id(int id);
-
     int count();
 }
